@@ -26,8 +26,12 @@ ADD_LIBRARY(types_slam3d ${G2O_LIB_TYPE}
   edge_se3_pointxyz_depth.h
   edge_se3_prior.cpp
   edge_se3_prior.h
+  edge_se3_linear_acceleration.cpp
+  edge_se3_linear_acceleration.h
   edge_se3_lotsofxyz.cpp
   edge_se3_lotsofxyz.h
+  edge_se3_pointxyz_uv.cpp
+  edge_se3_pointxyz_uv.h
   se3quat.h
   se3_ops.h se3_ops.hpp
   edge_pointxyz.cpp edge_pointxyz.h
@@ -38,7 +42,7 @@ ADD_LIBRARY(types_slam3d ${G2O_LIB_TYPE}
 
 SET_TARGET_PROPERTIES(types_slam3d PROPERTIES OUTPUT_NAME ${LIB_PREFIX}types_slam3d)
 TARGET_LINK_LIBRARIES(types_slam3d core)
-IF(G2O_HAVE_OPENGL)
+IF(OPENGL_FOUND)
   TARGET_LINK_LIBRARIES(types_slam3d opengl_helper ${OPENGL_gl_LIBRARY} )
 ENDIF()
 

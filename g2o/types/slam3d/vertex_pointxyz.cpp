@@ -61,7 +61,7 @@ namespace g2o {
     if (! DrawAction::refreshPropertyPtrs(params_))
       return false;
     if (_previousParams){
-      _pointSize = _previousParams->makeProperty<FloatProperty>(_typeName + "::POINT_SIZE", 1.);
+      _pointSize = _previousParams->makeProperty<FloatProperty>(_typeName + "::POINT_SIZE", 3.);
     } else {
       _pointSize = 0;
     }

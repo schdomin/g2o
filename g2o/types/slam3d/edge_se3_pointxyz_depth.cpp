@@ -26,6 +26,11 @@
 
 #include "edge_se3_pointxyz_depth.h"
 
+#ifdef G2O_HAVE_OPENGL
+#include "g2o/stuff/opengl_wrapper.h"
+#include "g2o/stuff/opengl_primitives.h"
+#endif
+
 namespace g2o {
   using namespace g2o;
 
@@ -168,5 +173,36 @@ namespace g2o {
     p=invKcam*p;
     point->setEstimate(cam->estimate() * (params->offset() * p));
   }
+
+#ifdef G2O_HAVE_OPENGL
+  EdgeProjectDepthDrawAction::EdgeProjectDepthDrawAction(): DrawAction(typeid(EdgeSE3PointXYZDepth).name()){}
+
+  HyperGraphElementAction* EdgeProjectDepthDrawAction::operator()(HyperGraph::HyperGraphElement* element,
+                HyperGraphElementAction::Parameters*  params_ ){
+  if (typeid(*element).name()!=_typeName)
+      return 0;
+    refreshPropertyPtrs(params_);
+    if (! _previousParams)
+      return this;
+
+    if (_show && !_show->value())
+      return this;
+    EdgeSE3PointXYZDepth* e =  static_cast<EdgeSE3PointXYZDepth*>(element);
+    VertexSE3* fromEdge = static_cast<VertexSE3*>(e->vertices()[0]);
+    VertexPointXYZ* toEdge   = static_cast<VertexPointXYZ*>(e->vertices()[1]);
+    if (! fromEdge || ! toEdge)
+      return this;
+    Isometry3D fromTransform=fromEdge->estimate() * e->cameraParameter()->offset();
+    glColor3f(LANDMARK_EDGE_COLOR);
+    glPushAttrib(GL_ENABLE_BIT);
+    glDisable(GL_LIGHTING);
+    glBegin(GL_LINES);
+    glVertex3f((float)fromTransform.translation().x(),(float)fromTransform.translation().y(),(float)fromTransform.translation().z());
+    glVertex3f((float)toEdge->estimate().x(),(float)toEdge->estimate().y(),(float)toEdge->estimate().z());
+    glEnd();
+    glPopAttrib();
+    return this;
+  }
+#endif
 
 }

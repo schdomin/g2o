@@ -246,7 +246,17 @@ namespace g2o {
       _showId = 0;
     } else {
       _previousParams = p;
-      _show = p->makeProperty<BoolProperty>(_typeName+"::SHOW", true);
+
+      //ds only show basic elements per default
+      if( "N3g2o9VertexSE3E" == _typeName || "N3g2o14VertexPointXYZE" == _typeName || "N3g2o25EdgeSE3LinearAccelerationE" == _typeName || "N3g2o7EdgeSE3E" == _typeName )
+      {
+          _show = p->makeProperty<BoolProperty>(_typeName+"::SHOW", true);
+      }
+      else
+      {
+          _show = p->makeProperty<BoolProperty>(_typeName+"::SHOW", false);
+      }
+
       _showId = p->makeProperty<BoolProperty>(_typeName+"::SHOW_ID", false);
     }
     return true;

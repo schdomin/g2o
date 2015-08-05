@@ -24,8 +24,8 @@
 // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef G2O_EDGE_PROJECT_DEPTH_H_
-#define G2O_EDGE_PROJECT_DEPTH_H_
+#ifndef G2O_EDGE_PROJECT_UV_H_
+#define G2O_EDGE_PROJECT_UV_H_
 
 #include "g2o/core/base_binary_edge.h"
 
@@ -37,53 +37,48 @@
 namespace g2o {
 
   /*! \class EdgeProjectDepth
-   * \brief g2o edge from a track to a depth camera node using a depth measurement (true distance, not disparity)
+   * \brief g2o edge from a track to a pinhole camera node, image coordinates 
    */
-  class G2O_TYPES_SLAM3D_API EdgeSE3PointXYZDepth : public BaseBinaryEdge<3, Vector3D, VertexSE3, VertexPointXYZ> {
+  class G2O_TYPES_SLAM3D_API EdgeSE3PointXYZUV : public BaseBinaryEdge<2, Vector2D, VertexSE3, VertexPointXYZ> {
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    EdgeSE3PointXYZDepth();
+    EdgeSE3PointXYZUV();
     virtual bool read(std::istream& is);
     virtual bool write(std::ostream& os) const;
 
-    // return the error estimate as a 3-vector
+    // return the error estimate as a 2-vector
     void computeError();
     // jacobian
     virtual void linearizeOplus();
     
 
-    virtual void setMeasurement(const Vector3D& m){
+    virtual void setMeasurement(const Vector2D& m){
       _measurement = m;
     }
 
     virtual bool setMeasurementData(const double* d){
-      Eigen::Map<const Vector3D> v(d);
+      Eigen::Map<const Vector2D> v(d);
       _measurement = v;
       return true;
     }
 
     virtual bool getMeasurementData(double* d) const{
-      Eigen::Map<Vector3D> v(d);
+      Eigen::Map<Vector2D> v(d);
       v=_measurement;
       return true;
     }
     
-    virtual int measurementDimension() const {return 3;}
+    virtual int measurementDimension() const {return 2;}
 
     virtual bool setMeasurementFromState() ;
 
-    virtual double initialEstimatePossible(const OptimizableGraph::VertexSet& from, 
-             OptimizableGraph::Vertex* to) { 
-      (void) to; 
+    virtual double initialEstimatePossible(const OptimizableGraph::VertexSet& from , 
+             OptimizableGraph::Vertex* ) {
       return (from.count(_vertices[0]) == 1 ? 1.0 : -1.0);
     }
 
-    virtual void initialEstimate(const OptimizableGraph::VertexSet& from, OptimizableGraph::Vertex* to);
-
-    const ParameterCamera* cameraParameter() const { return params; }
-
   private:
-    Eigen::Matrix<double,3,9,Eigen::ColMajor> J; // jacobian before projection
+    Eigen::Matrix<double,3,9,Eigen::ColMajor> Jp; // jacobian before projection
 
     virtual bool resolveCaches();
     ParameterCamera* params;
@@ -91,10 +86,10 @@ namespace g2o {
   };
 
 #ifdef G2O_HAVE_OPENGL
-  class G2O_TYPES_SLAM3D_API EdgeProjectDepthDrawAction: public DrawAction{
+  class G2O_TYPES_SLAM3D_API EdgeSE3PointXYZUVDrawAction: public DrawAction{
   public:
-      EdgeProjectDepthDrawAction();
-    virtual HyperGraphElementAction* operator()(HyperGraph::HyperGraphElement* element,
+      EdgeSE3PointXYZUVDrawAction();
+    virtual HyperGraphElementAction* operator()(HyperGraph::HyperGraphElement* element, 
             HyperGraphElementAction::Parameters* params_);
   };
 #endif
