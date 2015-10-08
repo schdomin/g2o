@@ -26,6 +26,11 @@
 
 #include "edge_pointxyz.h"
 
+#ifdef G2O_HAVE_OPENGL
+#include "g2o/stuff/opengl_wrapper.h"
+#include "g2o/stuff/opengl_primitives.h"
+#endif
+
 namespace g2o {
 
   EdgePointXYZ::EdgePointXYZ() :
@@ -66,6 +71,39 @@ namespace g2o {
     _jacobianOplusXi=-Matrix3D::Identity();
     _jacobianOplusXj= Matrix3D::Identity();
   }
+#endif
+
+#ifdef G2O_HAVE_OPENGL
+
+    EdgePointXYZDrawAction::EdgePointXYZDrawAction( ): DrawAction( typeid( EdgePointXYZ ).name( ) ){ }
+
+    HyperGraphElementAction* EdgePointXYZDrawAction::operator( )( HyperGraph::HyperGraphElement* element, HyperGraphElementAction::Parameters*  params_ )
+    {
+        if (typeid(*element).name()!=_typeName)
+          return 0;
+        refreshPropertyPtrs(params_);
+        if (! _previousParams)
+          return this;
+
+        if (_show && !_show->value())
+          return this;
+
+        EdgePointXYZ* e =  static_cast<EdgePointXYZ*>(element);
+        VertexPointXYZ* fromVertex = static_cast<VertexPointXYZ*>(e->vertices()[0]);
+        VertexPointXYZ* toVertex   = static_cast<VertexPointXYZ*>(e->vertices()[1]);
+        if (! fromVertex || ! toVertex)
+          return this;
+        glColor3f(POSE_EDGE_COLOR);
+        glPushAttrib(GL_ENABLE_BIT);
+        glDisable(GL_LIGHTING);
+        glBegin(GL_LINES);
+        glVertex3f((float)fromVertex->estimate().x(),(float)fromVertex->estimate().y(),(float)fromVertex->estimate().z());
+        glVertex3f((float)toVertex->estimate().x(),(float)toVertex->estimate().y(),(float)toVertex->estimate().z());
+        glEnd();
+        glPopAttrib();
+        return this;
+    }
+
 #endif
 
 } // end namespace

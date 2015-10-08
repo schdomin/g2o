@@ -109,7 +109,7 @@ namespace g2o {
         const Vector3D vecMeasurementWORLD( _cache->n2w( ).linear( )*_measurement );
 
         //ds and compare against normed gravity (- -1.0 -> +1.0)
-        _error = vecMeasurementWORLD-Vector3D( 0, 0, -1 );
+        _error = vecMeasurementWORLD-Vector3D( 0.0, 0.0, -1.0 );
 
         //std::printf( "measurement: (%f, %f, %f)\n", vecMeasurementWORLD(0), vecMeasurementWORLD(1), vecMeasurementWORLD(2) );
         //std::printf( "error: (%f, %f, %f)\n", _error(0), _error(1), _error(2) );

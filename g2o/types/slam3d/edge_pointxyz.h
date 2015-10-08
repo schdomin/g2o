@@ -78,8 +78,21 @@ namespace g2o {
 #ifndef NUMERIC_JACOBIAN_THREE_D_TYPES
       virtual void linearizeOplus();
 #endif
-  };
 
+};
+
+#ifdef G2O_HAVE_OPENGL
+
+class G2O_TYPES_SLAM3D_API EdgePointXYZDrawAction: public DrawAction
+{
+
+public:
+
+    EdgePointXYZDrawAction( );
+    virtual HyperGraphElementAction* operator( )( HyperGraph::HyperGraphElement* element, HyperGraphElementAction::Parameters* params_ );
+};
+
+#endif
 
 } // end namespace
 

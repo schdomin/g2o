@@ -61,6 +61,7 @@ namespace g2o {
   G2O_REGISTER_ACTION(CacheCameraDrawAction);
   G2O_REGISTER_ACTION(CacheSE3OffsetDrawAction);
   G2O_REGISTER_ACTION(EdgeSE3LinearAccelerationDrawAction);
+  G2O_REGISTER_ACTION(EdgePointXYZDrawAction);
 #endif
 
 } // end namespace
